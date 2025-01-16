@@ -12,19 +12,19 @@ A intuitive Gradio UI for Black Forest Labs' FLUX Pro Finetuning API. Train cust
 ## Interface Screenshots
 
 ### Training Tab
-![Training Interface](assets/4.png)
+![Training Interface](assets/Screenshot-4.png)
 *Configure and start your training jobs with an intuitive interface*
 
 ### Progress Monitoring
-![Progress Monitoring](assets/3.png)
+![Progress Monitoring](assets/Screenshot-3.png)
 *Track your training progress in real-time*
 
 ### Model Management
-![Model Management](assets/2.png)
+![Model Management](assets/Screenshot-2.png)
 *Manage your finetuned models and view their details*
 
 ### Image Generation
-![Image Generation](assets/1.png)
+![Image Generation](assets/Screenshot-1.png)
 *Generate images using your custom-trained models*
 
 ## ✨ Features
