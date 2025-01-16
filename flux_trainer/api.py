@@ -4,6 +4,7 @@ import json
 import logging
 import os
 from typing import Dict, List, Optional, Union
+import time
 
 import requests
 from requests import Response
@@ -275,6 +276,7 @@ class FluxAPI:
         }
 
         try:
+            # Step 1: Request image generation
             inference_response = self._make_request("POST", endpoint, json=payload)
             inference_id = inference_response.get('id')
             if not inference_id:
@@ -282,14 +284,26 @@ class FluxAPI:
                 
             logger.info(f"Image generation started with ID: {inference_id}")
             
-            result = self.get_progress(inference_id)
-            if result["status"] != "Ready":
-                error_msg = f"Image generation failed: {result['status']}"
-                logger.error(error_msg)
-                raise FluxAPIError(error_msg)
+            # Step 2: Poll for results
+            max_attempts = 30
+            attempt = 0
+            while attempt < max_attempts:
+                result = self.get_progress(inference_id)
+                if result.get("status") == "Ready":
+                    if "result" in result and "sample" in result["result"]:
+                        logger.info("Image generation completed successfully")
+                        return result["result"]
+                    else:
+                        raise FluxAPIError(f"Invalid result format: {result}")
+                elif result.get("status") in ["Failed", "Error"]:
+                    error_msg = f"Image generation failed: {result.get('error', 'Unknown error')}"
+                    logger.error(error_msg)
+                    raise FluxAPIError(error_msg)
+                
+                attempt += 1
+                time.sleep(2)  # Wait 2 seconds between checks
             
-            logger.info("Image generation completed successfully")
-            return result["result"]
+            raise FluxAPIError("Image generation timed out")
             
         except FluxAPIError:
             raise
